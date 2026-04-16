@@ -1,4 +1,9 @@
-using BoundaryValueDiffEq, FNCFunctions, LaTeXStrings, LinearAlgebra, NLsolve, OrdinaryDiffEq, Plots, Polynomials, PrettyTables, SciMLBase, SparseArrays
+using Arpack, BenchmarkTools, BoundaryValueDiffEq, Colors, Dierckx, FFTW,
+      FNCFunctions, GraphRecipes, HDF5, IJulia, Images, IncompleteLU,
+      IterativeSolvers, JLD2, JSON, LaTeXStrings, LinearAlgebra, LinearMaps,
+      MAT, MatrixDepot, MatrixMarket, NLsolve, OrdinaryDiffEq, Plots,
+      Polynomials, Preconditioners, PrettyTables, QuadGK, SciMLBase,
+      SparseArrays, SpecialFunctions, Statistics, TestImages
 
 A = rand(10, 10)
 B = A[:, 1:4]

@@ -8,7 +8,8 @@
 
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/.juliaup/bin",
-    "JULIA_PROJECT": "/home/vscode"
+    "JULIA_DEPOT_PATH": "/opt/julia-depot",
+    "JULIA_PROJECT": "/opt/julia-env"
   },
 
   "customizations": {
@@ -16,7 +17,10 @@
       "extensions": [
         "julialang.language-julia",
         "ms-toolsai.jupyter"
-      ]
+      ],
+      "settings": {
+        "julia.environmentPath": "/opt/julia-env"
+      }
     }
   },
 

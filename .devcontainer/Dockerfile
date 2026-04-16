@@ -2,39 +2,39 @@
 ARG JULIA_VERSION
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
+ARG JULIA_VERSION
+
 # System deps
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends gcc g++ curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# Julia depot and project live in /opt (outside /home/vscode) so the multi-GB
+# package cache is not chowned on every container start when Dev Containers
+# remap the user UID. Only juliaup itself (small) stays under home.
+ENV JULIA_DEPOT_PATH=/opt/julia-depot
+ENV JULIA_PROJECT=/opt/julia-env
+RUN mkdir -p /opt/julia-depot /opt/julia-env \
+    && chown -R vscode:vscode /opt/julia-depot /opt/julia-env
+
 USER vscode
 
-# Redeclare after FROM to bring back into scope
-ARG JULIA_VERSION
-
-# Install juliaup + Julia into /home/vscode/.juliaup
+# Install juliaup into /home/vscode/.juliaup (its default location).
+# The Julia VS Code extension specifically looks for juliaup here; if it is
+# missing the extension opens a dialog prompting the user to install Julia.
 RUN curl -fsSL https://install.julialang.org | sh -s -- --yes --startup-selfupdate=0 \
     && /home/vscode/.juliaup/bin/juliaup add ${JULIA_VERSION} \
     && /home/vscode/.juliaup/bin/juliaup default ${JULIA_VERSION}
 
 ENV PATH="/home/vscode/.juliaup/bin:${PATH}"
 
-# The baked-in Julia project lives in the user's home directory.
-# Setting JULIA_PROJECT here makes it the default for all Julia processes
-# in the container — terminal, language server, and Jupyter kernels —
-# without requiring students to pass --project on every invocation.
-ENV JULIA_PROJECT=/home/vscode
+# Copy the environment files and workload into the baked-in project.
+COPY --chown=vscode:vscode Project.toml Manifest.toml /opt/julia-env/
+COPY --chown=vscode:vscode precompile_workload.jl /opt/julia-env/
 
-# Copy in the environment and workload script, owned by vscode
-COPY --chown=vscode:vscode Project.toml Manifest.toml /home/vscode/
-COPY --chown=vscode:vscode precompile_workload.jl /home/vscode/
-
-# Instantiate (resolves and precompiles all packages into ~/.julia/compiled/),
-# then run the workload to warm up as many code paths as possible.
-RUN julia -e 'import Pkg; Pkg.instantiate()' \
-    && julia /home/vscode/precompile_workload.jl
-
-# Register the Jupyter kernel so notebooks always use this project.
-# IJulia.installkernel records --project=/home/vscode in the kernel spec,
-# which overrides JULIA_PROJECT for kernel processes that don't inherit it.
-RUN julia -e 'using IJulia; IJulia.installkernel("Julia", "--project=/home/vscode")'
+# Instantiate, register the Jupyter kernel, then run the workload.
+# Registering the kernel BEFORE the workload means IJulia gets loaded and
+# fully precompiled as part of the single workload pass that follows.
+RUN julia -e 'import Pkg; Pkg.instantiate(); Pkg.precompile()' \
+    && julia -e 'using IJulia; IJulia.installkernel("Julia", "--project=/opt/julia-env")' \
+    && julia /opt/julia-env/precompile_workload.jl
