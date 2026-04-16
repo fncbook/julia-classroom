@@ -1,4 +1,5 @@
 # .devcontainer/Dockerfile
+ARG JULIA_VERSION
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 # System deps
@@ -6,10 +7,13 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends gcc g++ curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install juliaup + Julia 1.11.9
+# Redeclare after FROM to bring back into scope
+ARG JULIA_VERSION
+
+# Install juliaup + Julia
 RUN curl -fsSL https://install.julialang.org | sh -s -- --yes --startup-selfupdate=0 \
-    && /root/.juliaup/bin/juliaup add 1.11.9 \
-    && /root/.juliaup/bin/juliaup default 1.11.9
+    && /root/.juliaup/bin/juliaup add ${JULIA_VERSION} \
+    && /root/.juliaup/bin/juliaup default ${JULIA_VERSION}
 
 ENV PATH="/root/.juliaup/bin:${PATH}"
 
