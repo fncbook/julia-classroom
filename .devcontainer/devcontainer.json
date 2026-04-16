@@ -1,0 +1,14 @@
+{
+  "name": "Julia 1.11.9",
+  "image": "ghcr.io/fncbook/julia-classroom:1.11.9",
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "postCreateCommand": "julia --project=${HOME} -e 'import Pkg; Pkg.instantiate()'",
+
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/root/.juliaup/bin"
+  }
+}
