@@ -6,7 +6,7 @@
     "ghcr.io/devcontainers/features/git:1": {}
   },
 
-  "postCreateCommand": "julia --project=${HOME} -e 'import Pkg; Pkg.instantiate()'",
+  "postCreateCommand": "julia --project -e 'import Pkg; Pkg.instantiate()'",
 
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/root/.juliaup/bin"
