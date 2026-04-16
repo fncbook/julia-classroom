@@ -6,7 +6,10 @@
     "ghcr.io/devcontainers/features/git:1": {}
   },
 
-  "postCreateCommand": "julia --project=${HOME} -e 'import Pkg; Pkg.instantiate()'",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/.juliaup/bin",
+    "JULIA_PROJECT": "/home/vscode"
+  },
 
   "customizations": {
     "vscode": {
@@ -17,5 +20,5 @@
     }
   },
 
-  "forwardPorts": [8888, 1234]  
+  "forwardPorts": [8888, 1234]
 }

@@ -19,9 +19,22 @@ RUN curl -fsSL https://install.julialang.org | sh -s -- --yes --startup-selfupda
 
 ENV PATH="/home/vscode/.juliaup/bin:${PATH}"
 
+# The baked-in Julia project lives in the user's home directory.
+# Setting JULIA_PROJECT here makes it the default for all Julia processes
+# in the container — terminal, language server, and Jupyter kernels —
+# without requiring students to pass --project on every invocation.
+ENV JULIA_PROJECT=/home/vscode
+
 # Copy in the environment and workload script, owned by vscode
 COPY --chown=vscode:vscode Project.toml Manifest.toml /home/vscode/
 COPY --chown=vscode:vscode precompile_workload.jl /home/vscode/
 
-RUN julia --project=/home/vscode -e 'import Pkg; Pkg.instantiate()' \
-    && julia --project=/home/vscode /home/vscode/precompile_workload.jl
+# Instantiate (resolves and precompiles all packages into ~/.julia/compiled/),
+# then run the workload to warm up as many code paths as possible.
+RUN julia -e 'import Pkg; Pkg.instantiate()' \
+    && julia /home/vscode/precompile_workload.jl
+
+# Register the Jupyter kernel so notebooks always use this project.
+# IJulia.installkernel records --project=/home/vscode in the kernel spec,
+# which overrides JULIA_PROJECT for kernel processes that don't inherit it.
+RUN julia -e 'using IJulia; IJulia.installkernel("Julia", "--project=/home/vscode")'

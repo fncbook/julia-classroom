@@ -7,6 +7,7 @@ on:
       - Project.toml
       - precompile_workload.jl
       - .devcontainer/Dockerfile
+      - .devcontainer/devcontainer.json
   workflow_dispatch:
 
 permissions:
