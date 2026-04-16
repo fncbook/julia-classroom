@@ -6,7 +6,7 @@ It provides a pre-built Docker image with Julia and all necessary packages insta
 
 ## Using this template
 
-### Option 1: GitHub Codespaces (recommended)
+### Option 1: GitHub Codespaces (minimal fuss)
 
 Codespaces requires no local installation. Students open a fully configured Julia environment in their browser or in VS Code.
 
@@ -15,9 +15,9 @@ Codespaces requires no local installation. Students open a fully configured Juli
 3. In GitHub Classroom, create a new assignment and point it at your new repo.
 4. Students accept the assignment and open it in Codespaces via the **Code → Codespaces** button.
 
-First startup takes 30–60 seconds for the image pull; subsequent startups are faster.
+First startup takes a few minutes to set up the virtual machine. Execution may be 2-4 times slower overall than on a recent-model PC or Mac, but adequate.
 
-### Option 2: Local devcontainer
+### Option 2: Local devcontainer (medium fuss, uses local computer once set up)
 
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [VS Code](https://code.visualstudio.com/) with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
 
@@ -25,7 +25,7 @@ Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [
 2. Open it in VS Code. When prompted, click **Reopen in Container**. If not prompted, open the Command Palette (`Ctrl/Cmd+Shift+P`) and run **Dev Containers: Reopen in Container**.
 3. VS Code will pull the image and open a terminal inside the container with Julia available.
 
-### Option 3: Plain clone (no container)
+### Option 3: Plain clone (fastest, most to set up)
 
 If students have Julia installed locally and do not want to use Docker:
 
