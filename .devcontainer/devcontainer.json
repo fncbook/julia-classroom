@@ -10,5 +10,16 @@
 
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/root/.juliaup/bin"
-  }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "julialang.language-julia",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+
+  "forwardPorts": [8888, 1234]  
 }
