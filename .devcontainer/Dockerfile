@@ -17,7 +17,11 @@ ENV JULIA_PROJECT=/opt/julia-env
 RUN mkdir -p /opt/julia-depot /opt/julia-env \
     && chown -R vscode:vscode /opt/julia-depot /opt/julia-env
 
+# Switch to vscode for all remaining steps. The base image ends as root;
+# buildx can silently cache layers from a root context, so this must come
+# right before the first user-specific command.
 USER vscode
+WORKDIR /home/vscode
 
 # Install juliaup into /home/vscode/.juliaup (its default location).
 # The Julia VS Code extension specifically looks for juliaup here; if it is

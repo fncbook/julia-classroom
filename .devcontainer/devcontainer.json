@@ -2,10 +2,6 @@
   "name": "Julia 1.11.9",
   "image": "ghcr.io/fncbook/julia-classroom:1.11.9",
 
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {}
-  },
-
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/.juliaup/bin",
     "JULIA_DEPOT_PATH": "/opt/julia-depot",
