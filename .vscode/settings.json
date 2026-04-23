@@ -1,0 +1,15 @@
+{
+  "julia.enableTelemetry": false,
+  "julia.useRevise": true,
+  "julia.NumThreads": "auto",
+  "julia.execution.resultType": "inline",
+  "julia.format.indent": 4,
+  "[julia]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.formatOnSave": false
+  },
+  "files.exclude": {
+    "**/.ipynb_checkpoints": true
+  }
+}
