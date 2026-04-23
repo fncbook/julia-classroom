@@ -37,6 +37,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -49,3 +50,34 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           # cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+      - name: Smoke test — cached packages load without recompiling
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
+          docker pull "$IMAGE"
+          docker run --rm "$IMAGE" julia -e '
+            t_plots = @elapsed using Plots
+            t_ode   = @elapsed using OrdinaryDiffEq
+            println("using Plots:         $(round(t_plots, digits=2)) s")
+            println("using OrdinaryDiffEq: $(round(t_ode,   digits=2)) s")
+            # Fully cached loads on a 2-core CI runner are ~5s; anything
+            # above 30s means the precompile cache is not being hit.
+            t_plots < 30 || error("using Plots too slow ($(t_plots)s) — cache miss?")
+            t_ode   < 30 || error("using OrdinaryDiffEq too slow ($(t_ode)s) — cache miss?")
+          '
+
+      - name: Report image digest
+        if: always() && steps.build.outputs.digest != ''
+        run: |
+          DIGEST='${{ steps.build.outputs.digest }}'
+          REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.JULIA_VERSION }}@${DIGEST}"
+          echo "::notice title=New image digest::${REF}"
+          {
+            echo "## New image pushed"
+            echo ""
+            echo "Update \`.devcontainer/devcontainer.json\` to pin this digest:"
+            echo ""
+            echo '```json'
+            echo "\"image\": \"${REF}\","
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

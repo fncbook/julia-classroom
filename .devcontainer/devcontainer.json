@@ -1,6 +1,6 @@
 {
   "name": "Julia 1.11.9",
-  "image": "ghcr.io/fncbook/julia-classroom:1.11.9",
+  "image": "ghcr.io/fncbook/julia-classroom:1.11.9@sha256:86004d91c003917936f591d4b03d933f207f0d150f4b43d964fa2eb683de3f75",
 
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/.juliaup/bin",

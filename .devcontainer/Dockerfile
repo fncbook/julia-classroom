@@ -40,5 +40,5 @@ COPY --chown=vscode:vscode precompile_workload.jl /opt/julia-env/
 # Registering the kernel BEFORE the workload means IJulia gets loaded and
 # fully precompiled as part of the single workload pass that follows.
 RUN julia -e 'import Pkg; Pkg.instantiate(); Pkg.precompile()' \
-    && julia -e 'using IJulia; IJulia.installkernel("Julia", "--project=/opt/julia-env")' \
+    && julia -e 'using IJulia; IJulia.installkernel("Julia", "--project=/opt/julia-env"; env=Dict("JULIA_PROJECT"=>"/opt/julia-env", "JULIA_DEPOT_PATH"=>"/opt/julia-depot"))' \
     && julia /opt/julia-env/precompile_workload.jl
