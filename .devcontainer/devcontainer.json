@@ -20,5 +20,7 @@
     }
   },
 
+  "postCreateCommand": "bash .devcontainer/warm-vscodeserver.sh",
+
   "forwardPorts": [8888, 1234]
 }
