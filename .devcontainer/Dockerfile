@@ -32,6 +32,8 @@ RUN curl -fsSL https://install.julialang.org | sh -s -- --yes --startup-selfupda
 
 ENV PATH="/home/vscode/.juliaup/bin:${PATH}"
 
+ENV JULIA_CPU_TARGET="generic;cortex-a57;thunderx2t99;carmel;apple-m1,clone_all"
+
 # Copy the environment files and workload into the baked-in project.
 COPY --chown=vscode:vscode Project.toml Manifest.toml /opt/julia-env/
 COPY --chown=vscode:vscode precompile_workload.jl /opt/julia-env/
